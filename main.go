@@ -63,11 +63,7 @@ func main() {
 		go func(serverName string) {
 			defer wg.Done()
 
-			if !strings.Contains(serverName, ":") {
-				serverName = serverName + ":22"
-			}
-
-			log.Debug("Checking connection to: %v", serverName)
+			log.Debug("Checking connection to: ", serverName)
 			success := checkConnection(serverName, config)
 			result := ConnResult{
 				Server:  serverName,
@@ -123,7 +119,13 @@ func readServerList(serverPath string) ([]string, error) {
 	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		line := scanner.Text()
+
+		if !strings.Contains(line, ":") {
+			line = line + ":22"
+		}
+
+		lines = append(lines, line)
 	}
 
 	return lines, scanner.Err()
